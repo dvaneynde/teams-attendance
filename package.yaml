@@ -1,0 +1,55 @@
+name:                teams-attendance
+version:             0.1.0.0
+github:              "Github username here/teams-attendance"
+license:             BSD3
+author:              "Dirk Vaneynde"
+maintainer:          "dirk@dlvmechanografie.eu"
+copyright:           "2022 Dirk Vaneynde"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            App category here
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/Github username here/teams-attendance#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- regex-tdfa
+- regex-tdfa-text
+- time
+- mtl
+- split
+
+library:
+  source-dirs: src
+
+executables:
+  teams-attendance-exe:
+    main:                TeamsAttendance.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - teams-attendance
+
+tests:
+  teams-attendance-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - teams-attendance
+    - hspec
+    - QuickCheck
