@@ -23,6 +23,13 @@ teams-attendance-exe *.csv > iDL.csv
 ```
 
 
+# Build and Install
+```bash
+stack path --local-bin
+stack install
+```
+
+
 # Development
 ## Set Up
 
@@ -31,11 +38,15 @@ See https://medium.com/@dogwith1eye/setting-up-haskell-in-vs-code-with-stack-and
 ## Test Run
 Using test files in `data` folder:
 ```bash
-ls data | sed "s/^/\"data/;s/$/\"/" | xargs stack run
+stack run $(find data/*.csv)
 ```
 
-# Build and Install
-```bash
-stack path --local-bin
-stack install
-```
+## Stack & Cabal Libraries
+Open https://www.stackage.org/lts-20.12 and search for the type, e.g. `optparse`. You may find a package `optparse-applicative`, add that to `package.yaml` packages list.
+
+## Upgrade ghc, cabal etc.
+
+Update the resolver field of the `stack.yaml` to use the latest LTS Haskell, then stack build.
+Best to comment out all libraries in `package.yaml` first.
+
+Note also stack.yaml of the “global project” (e.g. ~/.stack/global-project/stack.yaml).

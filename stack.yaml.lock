@@ -3,10 +3,18 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: regex-tdfa-text-1.0.0.3@sha256:fb72123627eadf43dd5ca74a2896940d50aac291e61f62177960f0563f7d5c03,1180
+    pantry-tree:
+      sha256: 274206c4f30a2c85cc8daefcb0d221b45010a28f1c0f39295189850eecc978e4
+      size: 293
+  original:
+    hackage: regex-tdfa-text-1.0.0.3
 snapshots:
 - completed:
-    size: 545658
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/12.yaml
-    sha256: 26b807457213126d26b595439d705dc824dbb7618b0de6b900adc2bf6a059406
-  original: lts-14.12
+    sha256: af5d667f6096e535b9c725a72cffe0f6c060e0568d9f9eeda04caee70d0d9d2d
+    size: 649133
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/12.yaml
+  original:
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/12.yaml

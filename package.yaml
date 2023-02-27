@@ -21,18 +21,19 @@ description:         Please see the README on GitHub at <https://github.com/Gith
 
 dependencies:
 - base >= 4.7 && < 5
-- regex-tdfa
-- regex-tdfa-text
 - time
-- mtl
 - split
+- regex-tdfa
+- optparse-applicative
+# - regex-tdfa-text
+# - mtl
 
 library:
   source-dirs: src
 
 executables:
   teams-attendance-exe:
-    main:                TeamsAttendance.hs
+    main:                Main.hs
     source-dirs:         app
     ghc-options:
     - -threaded

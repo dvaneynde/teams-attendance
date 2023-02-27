@@ -1,4 +1,6 @@
-module Main where
+module TeamsAttendance
+    ( someFunc, generateAttendanceReport, errPutStrLn
+    ) where
 
 import System.Environment
 import Text.Regex.TDFA
@@ -8,10 +10,12 @@ import Data.Time.Calendar
 import Data.List
 import Data.List.Split
 import Data.Char
-import Control.Monad.Cont
 import Debug.Trace
 import GHC.IO.Handle
 import GHC.IO.Handle.FD
+
+someFunc :: IO ()
+someFunc = putStrLn "someFunc"
 
 data DayInfo = DayInfo 
     { day :: Day
@@ -19,6 +23,7 @@ data DayInfo = DayInfo
     , average :: Minutes
     , users :: [UserInfo]
     } deriving (Show)
+    
 type Minutes = Int
 data UserInfo = UserInfo String Int deriving (Show)
 
@@ -179,11 +184,8 @@ getDays ss =
         Right dd -> dd
 
 
-main :: IO ()
-main = do  
-    -- TODO usage, minimum 1 argument, file
-    args <- getArgs  
-
+generateAttendanceReport :: [String] -> IO ()
+generateAttendanceReport args = do
     -- errPutStrLn "The dates are:"
     -- mapM errPutStrLn (map showGregorian $ getDays args)
 
