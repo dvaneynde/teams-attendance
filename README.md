@@ -5,10 +5,9 @@ Teams has Attendance Reports for meetings. The `data` folder has some examples. 
 # Missing Features & Known Bugs
 
 Missing Features:
-- Help & parsing command line parameters.
 - Skip failed file instead of fail completely.
 - Error messages go to stdout, not stderr.
-- Map e-mails to friendly names and company. Sort by company and then name. Add order for companies.
+- Map e-mails (multiple) to friendly names and company. Sort by company and then name. Add order for companies.
     
 Bugs:
 - Dates are not sorted correctly. Last column seems wrong.
@@ -38,7 +37,8 @@ See https://medium.com/@dogwith1eye/setting-up-haskell-in-vs-code-with-stack-and
 ## Test Run
 Using test files in `data` folder:
 ```bash
-stack run $(find data/*.csv)
+stack run -- -h
+stack run -- $(find data/*.csv)
 ```
 
 ## Stack & Cabal Libraries

@@ -30,8 +30,8 @@ main = generateReport =<< execParser opts
   where
     opts = info (commandLine <**> helper)
       ( fullDesc
-     <> progDesc "Print a greeting for TARGET"
-     <> header "hello - a test for optparse-applicative" )
+     <> progDesc "Given multiple Microsoft Teams meeting reports in .csv format, generate an overview of attendance."
+     <> header "Aggregate MS Teams Attendance Report" )
 
 
 generateReport :: CommandLine -> IO ()
