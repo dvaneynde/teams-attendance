@@ -1,5 +1,5 @@
 module TeamsAttendance
-    ( someFunc, generateAttendanceReport, errPutStrLn
+    ( generateAttendanceReport
     ) where
 
 import System.Environment
@@ -11,11 +11,8 @@ import Data.List
 import Data.List.Split
 import Data.Char
 import Debug.Trace
-import GHC.IO.Handle
-import GHC.IO.Handle.FD
+import Utils
 
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
 
 data DayInfo = DayInfo 
     { day :: Day
@@ -26,9 +23,6 @@ data DayInfo = DayInfo
     
 type Minutes = Int
 data UserInfo = UserInfo String Int deriving (Show)
-
-
--- TODO tests
 
 
 {-
@@ -173,10 +167,6 @@ extractUsers rows =
         --result = trace ("rows:\n" ++ (unlines rows2) ++ "end rows\n") []
         result = map extractUserInfo rows2
     in sequence result
-
-
-errPutStrLn :: String -> IO ()
-errPutStrLn s = hPutStr stderr (s ++ "\n")
 
 
 getDays :: [String] -> [Day]

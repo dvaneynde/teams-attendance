@@ -1,10 +1,12 @@
 module Main where
 
 import TeamsAttendance
+import Utils
 
 import Options.Applicative
 import Data.Semigroup ((<>))
 
+-- TODO tests
 
 data CommandLine = CommandLine
   { usermap     :: Maybe String
