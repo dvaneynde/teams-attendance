@@ -1,6 +1,4 @@
-module UserMap
-    ( 
-    ) where
+module UserMap where
 
 import System.Environment
 import Text.Regex.TDFA
@@ -19,8 +17,11 @@ data UserMap = UserMap
     } deriving (Show)
 
 readUserMapFile :: String -> [UserMap]
+readUserMapFile fileName = []
 
 sortByCompanyThenName :: [UserMap] -> [UserMap]
+sortByCompanyThenName userMaps = []
+
 -- test = UserMap "Dirk" "dlvm" ["dirk@vaneynde.eu", "dirk@dlvmechanografie.eu"]
 -- UserMap {name = "Dirk", company = "dlvm", eMails = ["dirk@vaneynde.eu","dirk@dlvmechanografie.eu"]}
 --putStrLn (show test)

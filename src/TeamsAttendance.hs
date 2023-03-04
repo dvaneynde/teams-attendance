@@ -12,6 +12,7 @@ import Data.List.Split
 import Data.Char
 import Debug.Trace
 import Utils
+import UserMap
 
 
 data DayInfo = DayInfo 
@@ -35,11 +36,10 @@ Average,10,15.3
 Dirk,10,20.33
 Jan,5,20
 -}
-generateAttendanceReport :: [String] -> IO ()
-generateAttendanceReport args = do
-    -- errPutStrLn "The dates are:"
-    -- mapM errPutStrLn (map showGregorian $ getDays args)
-    results <- mapM processFile args    -- IO [Either String DayInfo]
+generateAttendanceReport :: Maybe String -> [String] -> IO ()
+generateAttendanceReport mUserMapFilename csvFileNames = do
+    -- errPutStrLn "The dates are:" ++ (mapM errPutStrLn (map showGregorian $ getDays args))
+    results <- mapM processFile csvFileNames    -- IO [Either String DayInfo]
     putStr $ createOutputReport results
     where
         processFile :: String -> IO (Either String DayInfo)

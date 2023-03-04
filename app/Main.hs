@@ -1,6 +1,7 @@
 module Main where
 
 import TeamsAttendance
+import UserMap
 import Utils
 
 import Options.Applicative
@@ -41,12 +42,6 @@ generateReport :: CommandLine -> IO ()
 generateReport (CommandLine _ True files) = 
     errPutStrLn "Sorry, quiet mode not implemented yet."  
 
-generateReport (CommandLine (Just _) _ files) = 
-    errPutStrLn "Sorry, usermap not implemented yet."  
-
-generateReport (CommandLine u q files) =
-    do
-        -- putStrLn ("UserMapping: " ++ (show u))
-        -- putStrLn ("Files: " ++ (unlines files))
-        generateAttendanceReport files  
+generateReport (CommandLine mUserMap _ files) =
+        generateAttendanceReport mUserMap files  
 
