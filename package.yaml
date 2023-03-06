@@ -25,8 +25,7 @@ dependencies:
 - split
 - regex-tdfa
 - optparse-applicative
-# - regex-tdfa-text
-# - mtl
+- sort
 
 library:
   source-dirs: src

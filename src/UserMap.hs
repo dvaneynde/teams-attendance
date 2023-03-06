@@ -1,27 +1,49 @@
 module UserMap where
 
-import System.Environment
-import Text.Regex.TDFA
-import Text.Regex.TDFA.Text ()
-import Text.Read
-import Data.Time.Calendar
 import Data.List
-import Data.List.Split
-import Data.Char
-import Debug.Trace
+import Data.Sort
+import Data.Function
+
 
 data UserMap = UserMap 
     { name :: String
     , company :: String
     , eMails :: [String]
-    } deriving (Show)
+    } deriving (Show, Read)
 
-readUserMapFile :: String -> [UserMap]
-readUserMapFile fileName = []
+
+-- Reads a file containing multiple of the following lines:
+--   UserMap {name = "Dirk", company = "dlvm", eMails = ["dirk@vaneynde.eu","dirk@dlvmechanografie.eu"]}
+-- TODO check that email appears in only one UserMap
+readUserMapFile :: Maybe String -> IO (Maybe [UserMap])
+readUserMapFile mFilename = 
+    case mFilename of 
+        Nothing -> return Nothing
+        Just fileName -> do
+            contents <- (fmap lines . readFile) fileName
+            return $ Just $ map read contents
+
 
 sortByCompanyThenName :: [UserMap] -> [UserMap]
-sortByCompanyThenName userMaps = []
+sortByCompanyThenName userMaps =
+    sortBy ((compare `on` company) <> (compare `on` name)) userMaps
 
--- test = UserMap "Dirk" "dlvm" ["dirk@vaneynde.eu", "dirk@dlvmechanografie.eu"]
--- UserMap {name = "Dirk", company = "dlvm", eMails = ["dirk@vaneynde.eu","dirk@dlvmechanografie.eu"]}
---putStrLn (show test)
+
+userMapsFromEmailsOnly :: [String] -> [UserMap]
+userMapsFromEmailsOnly userNames =
+    map createUserMap userNames
+    where
+        createUserMap name = UserMap name "N/A" [name]
+
+
+-- assumed that eMails are unique
+addUnknownEmailsToUserMaps :: [String] -> [UserMap] -> [UserMap]
+addUnknownEmailsToUserMaps ems ums =
+    foldl (\ums eMail -> addIfNotPresent ums eMail) ums ems -- 	(a -> b -> a) -> a -> [b] -> a
+    where
+        addIfNotPresent :: [UserMap] -> String -> [UserMap]
+        addIfNotPresent ums em = 
+            case find (\um -> em `elem` (eMails um)) ums of
+                Just _ -> ums
+                Nothing -> UserMap em "_Unknown" [em] : ums
+

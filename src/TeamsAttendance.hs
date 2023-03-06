@@ -2,10 +2,7 @@ module TeamsAttendance
     ( generateAttendanceReport
     ) where
 
-import System.Environment
 import Text.Regex.TDFA
-import Text.Regex.TDFA.Text ()
-import Text.Read
 import Data.Time.Calendar
 import Data.List
 import Data.List.Split
@@ -40,7 +37,8 @@ generateAttendanceReport :: Maybe String -> [String] -> IO ()
 generateAttendanceReport mUserMapFilename csvFileNames = do
     -- errPutStrLn "The dates are:" ++ (mapM errPutStrLn (map showGregorian $ getDays args))
     results <- mapM processFile csvFileNames    -- IO [Either String DayInfo]
-    putStr $ createOutputReport results
+    mUserMaps <- readUserMapFile mUserMapFilename
+    putStr $ createOutputReport mUserMaps results
     where
         processFile :: String -> IO (Either String DayInfo)
         processFile filename = 
@@ -50,7 +48,7 @@ generateAttendanceReport mUserMapFilename csvFileNames = do
                 Right day ->
                     let
                         contents :: IO [String]
-                        contents = (fmap lines . readFile) filename 
+                        contents = fmap lines $ (readFile filename)
                     in fmap (extractDayInfoFromReport day) contents)
 
      
@@ -80,19 +78,28 @@ extractDayInfoFromReport day rows =
     -- in Right $ trace ("Extracted report: " ++ (show result)) result
 
 
-createOutputReport :: [Either String DayInfo] -> String
-createOutputReport errorOrInfos =
+createOutputReport :: Maybe [UserMap] -> [Either String DayInfo] -> String
+createOutputReport mUserMaps errorOrInfos =
     case sequence errorOrInfos of 
         Left error -> ("Cannot generate report because: " ++ error)
         Right infos -> 
             let
-                showDay ::  DayInfo -> String
-                showDay (DayInfo {day = d}) = show d
-
-                output1 = foldl (\acc dayInfo -> acc ++ ", " ++ (showDay dayInfo)) "Who" infos
+                output1 = foldl (\acc dayInfo -> acc ++ ", " ++ (show $ day dayInfo)) "Who" infos
                 output2 = foldl (\acc dayInfo -> acc ++ ", " ++ (show $ elapsed dayInfo)) (output1 ++ "\nElapsed") infos
                 output3 = foldl (\acc dayInfo -> acc ++ ", " ++ (show $ average dayInfo)) (output2 ++ "\nAverage") infos
 
+                {- for each user, output a line with their time, if present; if not present 0 -}
+                uniqueEmails = getUniqueUsers infos
+                uniqueUsers = case mUserMaps of
+                    Nothing -> userMapsFromEmailsOnly uniqueEmails
+                    Just userMaps -> addUnknownEmailsToUserMaps uniqueEmails userMaps
+                sortedUniqueUsers = sortByCompanyThenName uniqueUsers
+                userLines = map (createUserOverview infos) sortedUniqueUsers
+
+            in 
+                output3 ++ "\n" ++ (unlines userLines)
+
+            where
                 getUniqueUsers :: [DayInfo] -> [String]
                 getUniqueUsers dis = 
                     let
@@ -100,22 +107,19 @@ createOutputReport errorOrInfos =
                             di <- dis
                             return $ map (\(UserInfo name _) -> name) (users di)
                     in nub $ concat usersPerMeeting
-                uniqueUsers = getUniqueUsers infos
 
-                createUserOverview :: [DayInfo] -> String -> String
-                createUserOverview dis userName =
-                    foldl (\a di -> (a ++ (processDI di))) userName dis
+                -- For a given user, return all its times per day
+                createUserOverview :: [DayInfo] -> UserMap -> String
+                createUserOverview dis um = let
+                        prefix = (show $ company um) ++ ", " ++ (show $ name um)
+                    in
+                        foldl (\a di -> (a ++ (processDI di))) prefix dis
                     where
                         processDI :: DayInfo -> String
                         processDI di =
-                            case find (\(UserInfo name _) -> name == userName) (users di) of
+                            case find (\(UserInfo name _) -> name `elem` (eMails um)) (users di) of
                                 Nothing -> ", 0"
-                                Just (UserInfo name time) -> ", " ++ (show time)
-
-                {- for each user, output a line with their time, if present; if not present 0 -}
-                userLines = map (createUserOverview infos) uniqueUsers
-
-            in output3 ++ "\n" ++ (unlines userLines)
+                                Just (UserInfo _ time) -> ", " ++ (show time)
 
 
 -- Parses strings of form "1h 3s", "25m 30s", "30s" etc. and gives time elapsed in seconds, or Nothing if not correct format
