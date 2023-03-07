@@ -20,11 +20,11 @@ commandLine = CommandLine
         ( long "usermap"
         <> short 'u'
         <> metavar "FILE"
-        <> help "Mapping of Teams e-mails to a company and username for reports." ))
+        <> help "Mapping of Teams e-mails to a company and username for reports. See Github, data/UserMap.txt for an example." ))
     <*> switch
         ( long "quiet"
         <> short 'q'
-        <> help "Whether to be quiet" )
+        <> help "Whether to be quiet." )
     <*> some (argument str (metavar "file.csv..."))
 
 

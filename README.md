@@ -7,29 +7,37 @@ Teams has Attendance Reports for meetings. The `data` folder has some examples. 
 Missing Features:
 - Skip failed file instead of fail completely.
 - Error messages go to stdout, not stderr.
-- Map e-mails (multiple) to friendly names and company. Sort by company and then name. Add order for companies.
+- Read utf-16 directly, so `iconv` can be skipped.
     
 Bugs:
 - Dates are not sorted correctly. Last column seems wrong.
 
-# Prepare files
-Files from Teams are in  UTF-16, need to convert them to UTF-8.
+# Usage
+CSV files from Teams are in UTF-16, need to convert them to UTF-8.
 ```bash
 mkdir utf8
 for F in *.csv; do iconv -f UTF-16 -t UTF-8 "$F" >"utf8/$F" ; done
 cd utf8
 teams-attendance-exe *.csv > iDL.csv
 ```
-
-
-# Build and Install
+Then execute:
 ```bash
-stack path --local-bin
-stack install
+# without UserMaps
+teams-attendance-exe $(find utf8/*.csv)
+# with UserMaps (recommended)
+teams-attendance-exe -u usermap.txt $(find utf8/*.csv)
 ```
 
+An example `usermap.txt`, that maps two emails found in the .csv report to Jan, and one to Johnny. If the .csv report contains an e-mail
+not in the usermap, a usermap is generated with only the e-mail.
+
+```
+UserMap {name = "Jan", company = "UN", eMails = ["jan.janssens.ext@un.int","sdc@smallco.co.uk"]}
+UserMap {name = "Johnny", company = "Scotch", eMails = ["Johnny.Walker@scotch.aero"]}
+```
 
 # Development
+
 ## Set Up
 
 See https://medium.com/@dogwith1eye/setting-up-haskell-in-vs-code-with-stack-and-the-ide-engine-81d49eda3ecf
@@ -39,6 +47,12 @@ Using test files in `data` folder:
 ```bash
 stack run -- -h
 stack run -- $(find data/*.csv)
+```
+
+## Install
+```bash
+stack path --local-bin
+stack install
 ```
 
 ## Stack & Cabal Libraries
