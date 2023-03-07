@@ -1,0 +1,6 @@
+UserMap {name = "Jan", company = "UN", eMails = ["jan.janssens.ext@un.int","sdc@smallco.co.uk"]}
+UserMap {name = "Johnny", company = "Scotch", eMails = ["Johnny.Walker@scotch.aero"]}
+UserMap {name = "Simon", company = "Spain", eMails = ["pgsimon@spain.es"]}
+UserMap {name = "Pope", company = "Vatican", eMails = ["jacek@woityla.at"]}
+UserMap {name = "Igor", company = "Spain", eMails = ["igor.3.lanis@sota.net"]}
+UserMap {name = "Fred", company = "UN", eMails = ["fredprimus@first.com"]}
