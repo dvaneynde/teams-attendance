@@ -9,7 +9,7 @@ data UserMap = UserMap
     { name :: String
     , company :: String
     , eMails :: [String]
-    } deriving (Show, Read)
+    } deriving (Eq, Show, Read)
 
 
 -- Reads a file containing multiple of the following lines:
@@ -33,7 +33,7 @@ userMapsFromEmailsOnly :: [String] -> [UserMap]
 userMapsFromEmailsOnly userNames =
     map createUserMap userNames
     where
-        createUserMap name = UserMap name "N/A" [name]
+        createUserMap name = UserMap name "_Unknown" [name]
 
 
 -- assumed that eMails are unique
