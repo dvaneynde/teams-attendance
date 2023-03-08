@@ -33,25 +33,26 @@ Average,10,15.3
 Dirk,10,20.33
 Jan,5,20
 -}
-generateAttendanceReport :: Maybe String -> [String] -> IO ()
-generateAttendanceReport mUserMapFilename csvFileNames = do
+generateAttendanceReport :: Maybe String -> Bool -> [String] -> IO ()
+generateAttendanceReport mUserMapFilename isUtf16 csvFileNames = do
     -- errPutStrLn "The dates are:" ++ (mapM errPutStrLn (map showGregorian $ getDays args))
-    results <- mapM processFile csvFileNames    -- IO [Either String DayInfo]
+    results <- mapM (processCsvFile isUtf16) csvFileNames    -- IO [Either String DayInfo]
     mUserMaps <- readUserMapFile mUserMapFilename
     putStr $ createOutputReport mUserMaps results
-    where
-        processFile :: String -> IO (Either String DayInfo)
-        processFile filename = 
-            {- trace ("processing file: " ++ filename) -}
-            (case parseFilenameForDate filename of
-                Left error -> return $ Left error
-                Right day ->
-                    let
-                        contents :: IO [String]
-                        contents = fmap lines $ (readFile filename)
-                    in fmap (extractDayInfoFromReport day) contents)
 
-     
+
+processCsvFile :: Bool -> String -> IO (Either String DayInfo)
+processCsvFile isUtf16 filename = 
+    {- trace ("processing file: " ++ filename) -}
+    case parseFilenameForDate filename of
+        Left error -> return $ Left error
+        Right day ->
+            let
+                contents :: IO [String]
+                contents = fmap lines $ (readWholeFile isUtf16 filename)
+            in fmap (extractDayInfoFromReport day) contents
+
+
 -- Extract date from Teams generated filenam, e.g. "Architecture Standup - Attendance report 05-12-22.csv" gives "05-12-22".
 parseFilenameForDate :: String -> Either String Day
 parseFilenameForDate s =

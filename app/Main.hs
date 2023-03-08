@@ -11,6 +11,7 @@ import Data.Semigroup ((<>))
 
 data CommandLine = CommandLine
   { usermap     :: Maybe String
+  , utf16       :: Bool
   , quiet       :: Bool
   , csvfiles    :: [String] } deriving Show
 
@@ -21,6 +22,9 @@ commandLine = CommandLine
         <> short 'u'
         <> metavar "FILE"
         <> help "Mapping of Teams e-mails to a company and username for reports. See Github, data/UserMap.txt for an example." ))
+    <*> switch
+        ( long "utf16"
+        <> help "CSV files are in UTF-16." )
     <*> switch
         ( long "quiet"
         <> short 'q'
@@ -39,9 +43,9 @@ main = generateReport =<< execParser opts
 
 generateReport :: CommandLine -> IO ()
 
-generateReport (CommandLine _ True files) = 
+generateReport (CommandLine _ _ True files) = 
     errPutStrLn "Sorry, quiet mode not implemented yet."  
 
-generateReport (CommandLine mUserMap _ files) =
-        generateAttendanceReport mUserMap files  
+generateReport (CommandLine mUserMap utf16 _ files) =
+        generateAttendanceReport mUserMap utf16 files  
 

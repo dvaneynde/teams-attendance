@@ -7,33 +7,31 @@ Teams has Attendance Reports for meetings. The `data` folder has some examples. 
 Missing Features:
 - Skip failed file instead of fail completely.
 - Error messages go to stdout, not stderr.
-- Read utf-16 directly, so `iconv` can be skipped.
     
 Bugs:
 - Dates are not sorted correctly. Last column seems wrong.
 
 # Usage
-CSV files from Teams are in UTF-16, need to convert them to UTF-8.
-```bash
-mkdir utf8
-for F in *.csv; do iconv -f UTF-16 -t UTF-8 "$F" >"utf8/$F" ; done
-cd utf8
-teams-attendance-exe *.csv > iDL.csv
-```
-Then execute:
-```bash
-# without UserMaps
-teams-attendance-exe $(find utf8/*.csv)
-# with UserMaps (recommended)
-teams-attendance-exe -u usermap.txt $(find utf8/*.csv)
-```
+Teams, open the meeting, and export the attendance report. This is a .csv file, in (stupid) UTF-16 format. The `data` folder has some examples.
 
-An example `usermap.txt`, that maps two emails found in the .csv report to Jan, and one to Johnny. If the .csv report contains an e-mail
-not in the usermap, a usermap is generated with only the e-mail.
+To generate the summary report, execute:
+```bash
+teams-attendance-exe --utf16 *.csv
+```
+Without the `--utf16` option UTF-8 is assumed. To convert UTF-16 to UTF-8 you can also use `iconv`.
+
+To replace the e-mails with a more readable name and company, use a UserMap file. Below is an example `usermap.txt`, 
+that maps emails found in the .csv report to Jan or Johnny an their company. If the .csv report contains an e-mail
+not in the usermap, output is the same as without UserMap.
 
 ```
 UserMap {name = "Jan", company = "UN", eMails = ["jan.janssens.ext@un.int","sdc@smallco.co.uk"]}
 UserMap {name = "Johnny", company = "Scotch", eMails = ["Johnny.Walker@scotch.aero"]}
+```
+
+To generate using the UserMap:
+```bash 
+teams-attendance-exe --utf16 -u usermap.txt *.csv
 ```
 
 # Development
@@ -46,7 +44,7 @@ See https://medium.com/@dogwith1eye/setting-up-haskell-in-vs-code-with-stack-and
 Using test files in `data` folder:
 ```bash
 stack run -- -h
-stack run -- $(find data/*.csv)
+stack run -- --utf16 $(find data/*.csv)
 ```
 
 ## Install
