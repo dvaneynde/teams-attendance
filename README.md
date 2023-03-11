@@ -6,17 +6,16 @@ Teams has Attendance Reports for meetings. The `data` folder has some examples. 
 
 Missing Features:
 - Skip failed file instead of fail completely.
-- Error messages go to stdout, not stderr.
     
 Bugs:
-- Dates are not sorted correctly. Last column seems wrong.
+- Error messages go to stdout, not stderr.
 
 # Usage
 Teams, open the meeting, and export the attendance report. This is a .csv file, in (stupid) UTF-16 format. The `data` folder has some examples.
 
 To generate the summary report, execute:
 ```bash
-teams-attendance-exe --utf16 *.csv
+teams-attendance --utf16 *.csv
 ```
 Without the `--utf16` option UTF-8 is assumed. To convert UTF-16 to UTF-8 you can also use `iconv`.
 
@@ -31,7 +30,7 @@ UserMap {name = "Johnny", company = "Scotch", eMails = ["Johnny.Walker@scotch.ae
 
 To generate using the UserMap:
 ```bash 
-teams-attendance-exe --utf16 -u usermap.txt *.csv
+teams-attendance --utf16 -u usermap.txt *.csv
 ```
 
 # Development
@@ -45,6 +44,7 @@ Using test files in `data` folder:
 ```bash
 stack run -- -h
 stack run -- --utf16 $(find data/*.csv)
+stack run -- --utf16 -u data/UserMap.txt $(find data/*.csv)
 ```
 
 ## Install

@@ -5,6 +5,8 @@ module TeamsAttendance
 import Text.Regex.TDFA
 import Data.Time.Calendar
 import Data.List
+import Data.Sort
+import Data.Function
 import Data.List.Split
 import Data.Char
 import Debug.Trace
@@ -36,9 +38,15 @@ Jan,5,20
 generateAttendanceReport :: Maybe String -> Bool -> [String] -> IO ()
 generateAttendanceReport mUserMapFilename isUtf16 csvFileNames = do
     -- errPutStrLn "The dates are:" ++ (mapM errPutStrLn (map showGregorian $ getDays args))
-    results <- mapM (processCsvFile isUtf16) csvFileNames    -- IO [Either String DayInfo]
+    eDayInfos' <- mapM (processCsvFile isUtf16) csvFileNames    -- IO [Either String DayInfo]
+    let eDayInfos = sortEitherDayInfos $ sequence eDayInfos'
     mUserMaps <- readUserMapFile mUserMapFilename
-    putStr $ createOutputReport mUserMaps results
+    putStr $ createOutputReport mUserMaps eDayInfos
+
+
+sortEitherDayInfos :: Either String [DayInfo] -> Either String [DayInfo]
+sortEitherDayInfos eDayInfos = 
+    fmap (sortBy (compare `on` day)) eDayInfos
 
 
 processCsvFile :: Bool -> String -> IO (Either String DayInfo)
@@ -79,9 +87,9 @@ extractDayInfoFromReport day rows =
     -- in Right $ trace ("Extracted report: " ++ (show result)) result
 
 
-createOutputReport :: Maybe [UserMap] -> [Either String DayInfo] -> String
+createOutputReport :: Maybe [UserMap] -> Either String [DayInfo] -> String
 createOutputReport mUserMaps errorOrInfos =
-    case sequence errorOrInfos of 
+    case errorOrInfos of 
         Left error -> ("Cannot generate report because: " ++ error)
         Right infos -> 
             let
